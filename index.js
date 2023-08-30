@@ -20,13 +20,17 @@ db.connect((err) => {
 });
 
 // Methods GET
-app.get("/admins", util.createGetAllRouteHandler("admin"));
-app.get("/clients", util.createGetAllRouteHandler("client"));
-app.get("/products", util.createGetAllRouteHandler("product"));
+app.get("/getAdmins", util.createGetAllRouteHandler("admin"));
+app.get("/getClients", util.createGetAllRouteHandler("client"));
+app.get("/getProducts", util.createGetAllRouteHandler("product"));
+app.get("/getAdmins/:id", util.createGetRouteHandler("admin", "idAdmin"));
+app.get("/getClients/:id", util.createGetRouteHandler("client", "idClient"));
+app.get("/getProducts/:id", util.createGetRouteHandler("product", "idProduct"));
 
-app.get("/admins/:id", util.createGetRouteHandler("admin", "idAdmin"));
-app.get("/clients/:id", util.createGetRouteHandler("client", "idClient"));
-app.get("/products/:id", util.createGetRouteHandler("product", "idProduct"));
+// Methods DELETE
+app.delete("/deleteAdmins/:id", util.createDeleteRouteHandler("admin", "idAdmin"));
+app.delete("/deleteClients/:id", util.createDeleteRouteHandler("client", "idClient"));
+app.delete("/deleteProducts/:id", util.createDeleteRouteHandler("product", "idProduct"));
 
 // Start server
 app.listen(port, () => {

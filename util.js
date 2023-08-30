@@ -1,13 +1,18 @@
 const db = require("./models/db.js");
 
+const errorLoadingData = "Error loading data.";
+const errorDeleteRecord = "Error deleting record.";
+const errorUpdateRecord = "Error updating record.";
+const errorInsertRecord = "Error inserting record.";
+
 /**
  * Função para lidar com erros.
  * @param {Object} res - O objeto de resposta Express.
  * @param {Error} error - O erro que ocorreu.
  */
-const handleError = (res, error) => {
+const handleError = (msgError, res, error) => {
   console.error(error);
-  res.status(500).json({ error: "Error loading data from admin table." });
+  res.status(500).json({ error: msgError });
 };
 
 /**
@@ -42,7 +47,7 @@ const createGetAllRouteHandler = (entity) => (req, res) => {
   const query = `SELECT * FROM ${entity}`;
   db.query(query, (err, results) => {
     if (err) {
-      handleError(res, err);
+      handleError(errorLoadingData, res, err);
     } else {
       res.json(results);
     }
@@ -60,7 +65,24 @@ const createGetRouteHandler = (entity, idField) => (req, res) => {
   const query = `SELECT * FROM ${entity} WHERE ${idField} = ?`;
   db.query(query, [entityId], (err, results) => {
     if (err) {
-      handleError(res, err);
+      handleError(errorLoadingData, res, err);
+    } else {
+      handleQueryResult(res, entity, results);
+    }
+  });
+};
+
+/**
+ * Função para criar um manipulador de rota DELETE para deletar registros.
+ * @param {string} entity - O nome da entidade para a qual a rota está sendo criada.
+ * @returns {Function} - A função do manipulador de rota DELETE.
+ */
+const createDeleteRouteHandler = (entity, idField) => (req, res) => {
+  const entityId = req.params.id;
+  const query = `DELETE FROM ${entity} WHERE ${idField} = ?`;
+  db.query(query, [entityId], (err, results) => {
+    if (err) {
+      handleError(errorDeleteRecord, res, err);
     } else {
       handleQueryResult(res, entity, results);
     }
@@ -73,4 +95,5 @@ module.exports = {
   handleQueryResult,
   createGetAllRouteHandler,
   createGetRouteHandler,
+  createDeleteRouteHandler,
 };
