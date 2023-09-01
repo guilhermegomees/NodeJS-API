@@ -27,15 +27,20 @@ app.get("/getAdmins/:id", util.createGetRouteHandler("admin", "idAdmin"));
 app.get("/getClients/:id", util.createGetRouteHandler("client", "idClient"));
 app.get("/getProducts/:id", util.createGetRouteHandler("product", "idProduct"));
 
-// Methods DELETE
-app.delete("/deleteAdmins/:id", util.createDeleteRouteHandler("admin", "idAdmin"));
-app.delete("/deleteClients/:id", util.createDeleteRouteHandler("client", "idClient"));
-app.delete("/deleteProducts/:id", util.createDeleteRouteHandler("product", "idProduct"));
+// Methods POST
+app.post("/addAdmins", util.createPostRouteHandler("admin", "idAdmin"));
+app.post("/addClients", util.createPostRouteHandler("client", "idClient"));
+app.post("/addProducts", util.createPostRouteHandler("product", "idProduct"));
 
 // Methods PUT
 app.put("/updateAdmins/:id", util.createPutRouteHandler("admin", "idAdmin"));
 app.put("/updateClients/:id", util.createPutRouteHandler("client", "idClient"));
 app.put("/updateProducts/:id", util.createPutRouteHandler("product", "idProduct"));
+
+// Methods DELETE
+app.delete("/deleteAdmins/:id", util.createDeleteRouteHandler("admin", "idAdmin"));
+app.delete("/deleteClients/:id", util.createDeleteRouteHandler("client", "idClient"));
+app.delete("/deleteProducts/:id", util.createDeleteRouteHandler("product", "idProduct"));
 
 // Start server
 app.listen(port, () => {

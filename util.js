@@ -1,10 +1,11 @@
 const db = require("./models/db.js");
 
-const errorLoadingData = "Error loading data.";
-const errorDeleteRecord = "Error deleting record.";
-const errorUpdateRecord = "Error updating record.";
-const errorInsertRecord = "Error inserting record.";
+const errorLoadingData    = "Error loading data.";
+const errorDeleteRecord   = "Error deleting record.";
+const errorUpdateRecord   = "Error updating record.";
+const errorInsertRecord   = "Error inserting record.";
 const successDeleteRecord = "Record deleted successfully!";
+const errorGetNewData     = "Error inserting record.";
 
 /**
  * Função para lidar com erros.
@@ -75,19 +76,32 @@ const createGetRouteHandler = (entity, idField) => (req, res) => {
 };
 
 /**
- * Função para criar um manipulador de rota DELETE para deletar registros.
+ * Função para criar um manipulador de rota POST para alterar registros.
  * @param {string} entity - O nome da entidade para a qual a rota está sendo criada.
- * @param {string} idField - O nome do campo ID usado na consulta.
- * @returns {Function} - A função do manipulador de rota DELETE.
+ * * @param {string} idField - O nome do campo ID usado na consulta.
+ * @returns {Function} - A função do manipulador de rota POST.
  */
-const createDeleteRouteHandler = (entity, idField) => (req, res) => {
-  const entityId = req.params.id;
-  const query = `DELETE FROM ${entity} WHERE ${idField} = ?`;
-  db.query(query, [entityId], (err, results) => {
+const createPostRouteHandler = (entity, idField) => (req, res) => {
+  const newData = req.body;
+
+  const insertQuery = `INSERT INTO ${entity} SET ?`;
+  db.query(insertQuery, newData, (err, insertResults) => {
     if (err) {
-      handleError(errorDeleteRecord, res, err);
+      handleError(errorInsertRecord, res, err);
     } else {
-      res.status(200).json({ success: successDeleteRecord });
+      const newId = insertResults.insertId;
+      const getNewDataQuery = `SELECT * FROM ${entity} WHERE ${idField} = ?`;
+      db.query(getNewDataQuery, [newId], (err, newResults) => {
+        if (err) {
+          handleError(errorGetNewData, res, err);
+        } else {
+          if (newResults.length === 0) {
+            handleNotFound(res, entity);
+          } else {
+            res.json(newResults[0]);
+          }
+        }
+      });
     }
   });
 };
@@ -123,6 +137,23 @@ const createPutRouteHandler = (entity, idField) => (req, res) => {
   });
 };
 
+/**
+ * Função para criar um manipulador de rota DELETE para deletar registros.
+ * @param {string} entity - O nome da entidade para a qual a rota está sendo criada.
+ * @param {string} idField - O nome do campo ID usado na consulta.
+ * @returns {Function} - A função do manipulador de rota DELETE.
+ */
+const createDeleteRouteHandler = (entity, idField) => (req, res) => {
+  const entityId = req.params.id;
+  const query = `DELETE FROM ${entity} WHERE ${idField} = ?`;
+  db.query(query, [entityId], (err, results) => {
+    if (err) {
+      handleError(errorDeleteRecord, res, err);
+    } else {
+      res.status(200).json({ success: successDeleteRecord });
+    }
+  });
+};
 
 module.exports = {
   handleError,
@@ -130,6 +161,7 @@ module.exports = {
   handleQueryResult,
   createGetAllRouteHandler,
   createGetRouteHandler,
-  createDeleteRouteHandler,
-  createPutRouteHandler
+  createPostRouteHandler,
+  createPutRouteHandler,
+  createDeleteRouteHandler
 };
