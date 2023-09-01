@@ -32,6 +32,11 @@ app.delete("/deleteAdmins/:id", util.createDeleteRouteHandler("admin", "idAdmin"
 app.delete("/deleteClients/:id", util.createDeleteRouteHandler("client", "idClient"));
 app.delete("/deleteProducts/:id", util.createDeleteRouteHandler("product", "idProduct"));
 
+// Methods PUT
+app.put("/updateAdmins/:id", util.createPutRouteHandler("admin", "idAdmin"));
+app.put("/updateClients/:id", util.createPutRouteHandler("client", "idClient"));
+app.put("/updateProducts/:id", util.createPutRouteHandler("product", "idProduct"));
+
 // Start server
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);

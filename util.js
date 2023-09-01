@@ -4,9 +4,11 @@ const errorLoadingData = "Error loading data.";
 const errorDeleteRecord = "Error deleting record.";
 const errorUpdateRecord = "Error updating record.";
 const errorInsertRecord = "Error inserting record.";
+const successDeleteRecord = "Record deleted successfully!";
 
 /**
  * Função para lidar com erros.
+ * @param {Object} msgError - Mensagem que será retornada em caso de erro.
  * @param {Object} res - O objeto de resposta Express.
  * @param {Error} error - O erro que ocorreu.
  */
@@ -34,7 +36,7 @@ const handleQueryResult = (res, entity, results) => {
   if (results.length === 0) {
     handleNotFound(res, entity);
   } else {
-    res.json(results[0]);
+    res.json(results);
   }
 };
 
@@ -75,6 +77,7 @@ const createGetRouteHandler = (entity, idField) => (req, res) => {
 /**
  * Função para criar um manipulador de rota DELETE para deletar registros.
  * @param {string} entity - O nome da entidade para a qual a rota está sendo criada.
+ * @param {string} idField - O nome do campo ID usado na consulta.
  * @returns {Function} - A função do manipulador de rota DELETE.
  */
 const createDeleteRouteHandler = (entity, idField) => (req, res) => {
@@ -84,10 +87,42 @@ const createDeleteRouteHandler = (entity, idField) => (req, res) => {
     if (err) {
       handleError(errorDeleteRecord, res, err);
     } else {
-      handleQueryResult(res, entity, results);
+      res.status(200).json({ success: successDeleteRecord });
     }
   });
 };
+
+/**
+ * Função para criar um manipulador de rota PUT para alterar registros.
+ * @param {string} entity - O nome da entidade para a qual a rota está sendo criada.
+ * @param {string} idField - O nome do campo ID usado na consulta.
+ * @returns {Function} - A função do manipulador de rota PUT.
+ */
+const createPutRouteHandler = (entity, idField) => (req, res) => {
+  const entityId = req.params.id;
+  const updatedData = req.body;
+
+  const query = `UPDATE ${entity} SET ? WHERE ${idField} = ?`;
+  db.query(query, [updatedData, entityId], (err, results) => {
+    if (err) {
+      handleError(errorUpdateRecord, res, err);
+    } else {
+      const getUpdatedDataQuery = `SELECT * FROM ${entity} WHERE ${idField} = ?`;
+      db.query(getUpdatedDataQuery, [entityId], (err, updatedResults) => {
+        if (err) {
+          handleError(errorGetUpdatedData, res, err);
+        } else {
+          if (updatedResults.length === 0) {
+            handleNotFound(res, entity);
+          } else {
+            res.json(updatedResults[0]);
+          }
+        }
+      });
+    }
+  });
+};
+
 
 module.exports = {
   handleError,
@@ -96,4 +131,5 @@ module.exports = {
   createGetAllRouteHandler,
   createGetRouteHandler,
   createDeleteRouteHandler,
+  createPutRouteHandler
 };
