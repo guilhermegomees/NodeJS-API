@@ -21,28 +21,28 @@ db.connect((err) => {
 
 // Methods GET
 app.get("/getAdmins", util.createGetAllRouteHandler("admin"));
-app.get("/getClients", util.createGetAllRouteHandler("client"));
+app.get("/getUsuarios", util.createGetAllRouteHandler("usuario"));
 app.get("/getProducts", util.createGetAllRouteHandler("product"));
 app.get("/getCompanies", util.createGetAllRouteHandler("company"));
 app.get("/getAdmins/:id", util.createGetRouteHandler("admin", "idAdmin"));
-app.get("/getClients/:id", util.createGetRouteHandler("client", "idClient"));
+app.get("/getUsuarios/:id", util.createGetRouteHandler("usuario", "idUser"));
 app.get("/getProducts/:id", util.createGetRouteHandler("product", "id"));
 app.get("/getCompanies/:id", util.createGetRouteHandler("company", "idCompany"));
 app.get("/getProductsByQuantity/:quant", util.createGetQuantityRouteHandler("product"));
 
 // Methods POST
 app.post("/addAdmins", util.createPostRouteHandler("admin", "idAdmin"));
-app.post("/addClients", util.createPostRouteHandler("client", "idClient"));
+app.post("/addUsuarios", util.createPostRouteHandler("usuario", "idUser"));
 app.post("/addProducts", util.createPostRouteHandler("product", "id"));
 
 // Methods PUT
 app.put("/updateAdmins/:id", util.createPutRouteHandler("admin", "idAdmin"));
-app.put("/updateClients/:id", util.createPutRouteHandler("client", "idClient"));
+app.put("/updateUsuarios/:id", util.createPutRouteHandler("usuario", "idUser"));
 app.put("/updateProducts/:id", util.createPutRouteHandler("product", "id"));
 
 // Methods DELETE
 app.delete("/deleteAdmins/:id", util.createDeleteRouteHandler("admin", "idAdmin"));
-app.delete("/deleteClients/:id", util.createDeleteRouteHandler("client", "idClient"));
+app.delete("/deleteUsuarios/:id", util.createDeleteRouteHandler("usuario", "idUser"));
 app.delete("/deleteProducts/:id", util.createDeleteRouteHandler("product", "id"));
 
 // Start server
