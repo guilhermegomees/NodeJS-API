@@ -76,6 +76,23 @@ const createGetRouteHandler = (entity, idField) => (req, res) => {
 };
 
 /**
+ * Função para criar um manipulador de rota GET para retornar uma quantidade de registros.
+ * @param {string} entity - O nome da entidade para a qual a rota está sendo criada.
+ * @returns {Function} - A função do manipulador de rota GET.
+ */
+const createGetQuantityRouteHandler = (entity) => (req, res) => {
+  const quant = req.params.quant;
+  const query = `SELECT * FROM ${entity} LIMIT ${quant}`;
+  db.query(query, [quant], (err, results) => {
+    if (err) {
+      handleError(errorLoadingData, res, err);
+    } else {
+      handleQueryResult(res, entity, results);
+    }
+  });
+};
+
+/**
  * Função para criar um manipulador de rota POST para alterar registros.
  * @param {string} entity - O nome da entidade para a qual a rota está sendo criada.
  * * @param {string} idField - O nome do campo ID usado na consulta.
@@ -163,5 +180,6 @@ module.exports = {
   createGetRouteHandler,
   createPostRouteHandler,
   createPutRouteHandler,
-  createDeleteRouteHandler
+  createDeleteRouteHandler,
+  createGetQuantityRouteHandler
 };
