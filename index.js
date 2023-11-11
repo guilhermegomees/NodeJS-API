@@ -9,6 +9,9 @@ const util = require("./util");
 
 const app = express();
 const port = process.env.PORT;
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 
 app.use(cors());
 
@@ -37,6 +40,7 @@ app.post("/addAdmins", util.createPostRouteHandler("admin", "idAdmin"));
 app.post("/addUsuarios", util.createPostRouteHandler("usuario", "idUser"));
 app.post("/addProducts", util.createPostRouteHandler("product", "id"));
 app.post("/addCarts", util.createPostRouteHandler("cart", "idCart"));
+
 
 // Methods PUT
 app.put("/updateAdmins/:id", util.createPutRouteHandler("admin", "idAdmin"));
