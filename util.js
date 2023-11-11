@@ -104,6 +104,10 @@ const createPostRouteHandler = (entity, idField) => (req, res) => {
   const insertQuery = `INSERT INTO ${entity} SET ?`;
   db.query(insertQuery, newData, (err, insertResults) => {
     if (err) {
+      if (err.code === "ER_DUP_ENTRY") {
+        return res.status(409).json({ error: "duplicate data" });
+      }
+
       handleError(errorInsertRecord, res, err);
     } else {
       const newId = insertResults.insertId;
