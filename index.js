@@ -33,6 +33,8 @@ app.get("/getUsuarios/:id", util.createGetRouteHandler("usuario", "idUser"));
 app.get("/getProducts/:id", util.createGetRouteHandler("product", "id"));
 app.get("/getCompanies/:id", util.createGetRouteHandler("company", "idCompany"));
 app.get("/getCarts/:id", util.createGetAllRouteHandler("cart", "idCart"));
+app.get("/getDetailsCart/:id", util.createGetRouteHandler("detailcart", "fkIdCart"));
+app.get("/getCartsByIdUser/:id", util.createGetRouteHandler("cart", "fkIdUser"));
 app.get("/getProductsByQuantity/:quant", util.createGetQuantityRouteHandler("product"));
 
 // Methods POST
