@@ -176,6 +176,77 @@ const createDeleteRouteHandler = (entity, idField) => (req, res) => {
   });
 };
 
+/**
+ * Função para adicionar um produto ao carrinho do usuário.
+ * Se existir um carrinho em status "Processing" para o usuário, o produto será adicionado a esse carrinho.
+ * Caso contrário, um novo carrinho com status "Processing" será criado.
+ * @param {Object} req - Objeto da requisição.
+ * @param {Object} res - Objeto de resposta.
+ */
+const addProductToCart = (req, res) => {
+  const userId = req.user.id; // Supondo que você tenha a informação do usuário na requisição
+
+  // Verifica se já existe um carrinho em andamento para o usuário
+  const checkCartQuery = 'SELECT * FROM cart WHERE fkIdUser = ? AND status = "Processing"';
+
+  db.query(checkCartQuery, [userId], (err, cartResults) => {
+    if (err) {
+      handleError(errorCheckCart, res, err);
+    } else {
+      if (cartResults.length > 0) {
+        // Se o carrinho existir, adiciona o produto a ele
+        const cartId = cartResults[0].idCart;
+        const productId = req.body.productId; // Certifique-se de substituir 'productId' com o nome real do campo
+
+        // Aqui você deve adaptar a lógica para adicionar o produto ao carrinho
+        // Pode ser necessário validar a existência do produto, atualizar a quantidade, etc.
+
+        // Exemplo de consulta de adição de produto ao carrinho (adapte conforme necessário)
+        const addToCartQuery = 'INSERT INTO detailCart (fkIdCart, fkIdProduct, quantity, unityPrice, subTotal) VALUES (?, ?, ?, ?, ?)';
+        const productQuantity = req.body.quantity || 1; // Defina uma quantidade padrão ou obtenha do corpo da requisição
+        const unityPrice = req.body.unityPrice || 0.0; // Defina um preço padrão ou obtenha do corpo da requisição
+        const subTotal = productQuantity * unityPrice;
+
+        db.query(
+          addToCartQuery,
+          [cartId, productId, productQuantity, unityPrice, subTotal],
+          (err, addToCartResults) => {
+            if (err) {
+              handleError(errorAddToCart, res, err);
+            } else {
+              res.json({ success: true, message: 'Produto adicionado ao carrinho com sucesso.' });
+            }
+          }
+        );
+      } else {
+        // Se o carrinho não existir, cria um novo carrinho e adiciona o produto a ele
+        const createCartQuery = 'INSERT INTO cart (creationDate, total, status, fkIdUser) VALUES (NOW(), 0.00, "Processing", ?)';
+        
+        db.query(createCartQuery, [userId], (err, createCartResults) => {
+          if (err) {
+            handleError(errorCreateCart, res, err);
+          } else {
+            const newCartId = createCartResults.insertId;
+            const productId = req.body.productId; // Certifique-se de substituir 'productId' com o nome real do campo
+            // Aqui você deve adaptar a lógica para adicionar o produto ao carrinho, similar à lógica acima
+
+            res.json({ success: true, message: 'Produto adicionado ao novo carrinho com sucesso.' });
+          }
+        });
+      }
+    }
+  });
+};
+
+// // Método para adicionar produto ao carrinho
+// const addProductToCartHandler = (req, res) => {
+//   try {
+//     addProductToCart(req, res);
+//   } catch (error) {
+//     handleError(error, res, error.message);
+//   }
+// };
+
 module.exports = {
   handleError,
   handleNotFound,
@@ -185,5 +256,6 @@ module.exports = {
   createPostRouteHandler,
   createPutRouteHandler,
   createDeleteRouteHandler,
-  createGetQuantityRouteHandler
+  createGetQuantityRouteHandler,
+  
 };

@@ -58,7 +58,7 @@ app.get("/getImageProducts/:name", async (req, res) => {
 app.post("/addAdmins", util.createPostRouteHandler("admin", "idAdmin"));
 app.post("/addUsuarios", util.createPostRouteHandler("usuario", "idUser"));
 app.post("/addProducts", util.createPostRouteHandler("product", "id"));
-app.post("/addCarts", util.createPostRouteHandler("cart", "idCart"));
+// app.post("/addCarts", util.addProductToCartHandler("cart", "idCart"));
 
 
 // Methods PUT
