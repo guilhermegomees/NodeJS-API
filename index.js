@@ -2,6 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
+const axios = require("axios");
 const bodyParser = require("body-parser");
 
 const db = require("./models/db");
@@ -36,6 +37,22 @@ app.get("/getCarts/:id", util.createGetAllRouteHandler("cart", "idCart"));
 app.get("/getDetailsCart/:id", util.createGetRouteHandler("detailcart", "fkIdCart"));
 app.get("/getCartsByIdUser/:id", util.createGetRouteHandler("cart", "fkIdUser"));
 app.get("/getProductsByQuantity/:quant", util.createGetQuantityRouteHandler("product"));
+app.get("/getImageProducts/:name", async (req, res) => {
+  try {
+    const nameImage = req.params.name;
+    const imageUrl = `https://supplygear.000webhostapp.com/backand/img/${nameImage}`;
+
+    // Faz a solicitação HTTP para obter a imagem
+    const response = await axios.get(imageUrl, { responseType: "arraybuffer" });
+
+    // Define os cabeçalhos da resposta para indicar que é uma imagem
+    res.set("Content-Type", "image/jpeg");
+    res.send(response.data);
+  } catch (error) {
+    console.error("Erro ao obter imagem:", error.message);
+    res.status(500).send("Erro interno do servidor");
+  }
+});
 
 // Methods POST
 app.post("/addAdmins", util.createPostRouteHandler("admin", "idAdmin"));
