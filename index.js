@@ -53,6 +53,25 @@ app.get("/getImageProducts/:name", async (req, res) => {
     res.status(500).send("Erro interno do servidor");
   }
 });
+app.get("/getCartsByIdUser/:id/statusProcessing", async (req, res) => {
+  const entityId = req.params.id;
+  const entity = "cart";
+  const idField = "fkIdUser";
+
+  const query = `SELECT * FROM ${entity} WHERE ${idField} = ? AND status = 'Processing'`;
+  db.query(query, [entityId], (err, results) => {
+    if (err) {
+      console.error(error);
+      res.status(500).json({ error: msgError });
+    } else {
+      if (results.length === 0) {
+        res.status(404).json({ error: `${entity} not found` });
+      } else {
+        res.json(results);
+      }
+    }
+  });
+});
 
 // Methods POST
 app.post("/addAdmins", util.createPostRouteHandler("admin", "idAdmin"));
