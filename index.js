@@ -37,41 +37,9 @@ app.get("/getCarts/:id", util.createGetAllRouteHandler("cart", "idCart"));
 app.get("/getDetailsCart/:id", util.createGetRouteHandler("detailcart", "fkIdCart"));
 app.get("/getCartsByIdUser/:id", util.createGetRouteHandler("cart", "fkIdUser"));
 app.get("/getProductsByQuantity/:quant", util.createGetQuantityRouteHandler("product"));
-app.get("/getImageProducts/:name", async (req, res) => {
-  try {
-    const nameImage = req.params.name;
-    const imageUrl = `https://supplygear.000webhostapp.com/backand/img/${nameImage}`;
-
-    // Faz a solicitação HTTP para obter a imagem
-    const response = await axios.get(imageUrl, { responseType: "arraybuffer" });
-
-    // Define os cabeçalhos da resposta para indicar que é uma imagem
-    res.set("Content-Type", "image/jpeg");
-    res.send(response.data);
-  } catch (error) {
-    console.error("Erro ao obter imagem:", error.message);
-    res.status(500).send("Erro interno do servidor");
-  }
-});
-app.get("/getCartsByIdUser/:id/statusProcessing", async (req, res) => {
-  const entityId = req.params.id;
-  const entity = "cart";
-  const idField = "fkIdUser";
-
-  const query = `SELECT * FROM ${entity} WHERE ${idField} = ? AND status = 'Processing'`;
-  db.query(query, [entityId], (err, results) => {
-    if (err) {
-      console.error(error);
-      res.status(500).json({ error: msgError });
-    } else {
-      if (results.length === 0) {
-        res.status(404).json({ error: `${entity} not found` });
-      } else {
-        res.json(results);
-      }
-    }
-  });
-});
+app.get("/getCartsByIdUser/:id/statusProcessing", util.createGetStatusCart("Processing"));
+app.get("/getCartsByIdUser/:id/statusCompleted", util.createGetStatusCart("Completed"));
+app.get("/getImageProducts/:name", util.createGetImage());
 
 // Methods POST
 app.post("/addAdmins", util.createPostRouteHandler("admin", "idAdmin"));

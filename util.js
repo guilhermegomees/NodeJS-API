@@ -58,6 +58,47 @@ const createGetAllRouteHandler = (entity) => (req, res) => {
 };
 
 /**
+ * Função para criar um manipulador de rota GET para buscar carrinhos com um status específico.
+ * @param {string} statusName - Nome do status.
+ * @returns {Function} - A função do manipulador de rota GET.
+ */
+const createGetStatusCart = (statusName) => (req, res) => {
+  const entityId = req.params.id;
+  const entity = "cart";
+  const idField = "fkIdUser";
+
+  const query = `SELECT * FROM ${entity} WHERE ${idField} = ? AND status = '${statusName}'`;
+  db.query(query, [entityId], (err, results) => {
+    if (err) {
+      handleError(errorLoadingData, res, err);
+    } else {
+      handleQueryResult(res, entity, results);
+    }
+  });
+};
+
+/**
+ * Função para criar um manipulador de rota GET para buscar imagens em url externa.
+ * @returns {Function} - A função do manipulador de rota GET.
+ */
+const createGetImage = (statusName) => async (req, res) => {
+  try {
+    const nameImage = req.params.name;
+    const imageUrl = `https://supplygear.000webhostapp.com/backand/img/${nameImage}`;
+
+    // Faz a solicitação HTTP para obter a imagem
+    const response = await axios.get(imageUrl, { responseType: "arraybuffer" });
+
+    // Define os cabeçalhos da resposta para indicar que é uma imagem
+    res.set("Content-Type", "image/jpeg");
+    res.send(response.data);
+  } catch (error) {
+    console.error("Erro ao obter imagem:", error.message);
+    res.status(500).send("Erro interno do servidor");
+  }
+};
+
+/**
  * Função para criar um manipulador de rota GET para uma única entidade por ID.
  * @param {string} entity - O nome da entidade para a qual a rota está sendo criada.
  * @param {string} idField - O nome do campo ID usado na consulta.
@@ -187,5 +228,7 @@ module.exports = {
   createPostRouteHandler,
   createPutRouteHandler,
   createDeleteRouteHandler,
-  createGetQuantityRouteHandler
+  createGetQuantityRouteHandler,
+  createGetStatusCart,
+  createGetImage
 };
