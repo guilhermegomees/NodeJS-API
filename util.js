@@ -83,6 +83,7 @@ const createGetStatusCart = (statusName) => (req, res) => {
  */
 const createGetImage = (statusName) => async (req, res) => {
   try {
+    const axios = require("axios");
     const nameImage = req.params.name;
     const imageUrl = `https://supplygear.000webhostapp.com/backand/img/${nameImage}`;
 

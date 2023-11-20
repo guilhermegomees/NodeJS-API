@@ -2,7 +2,6 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-const axios = require("axios");
 const bodyParser = require("body-parser");
 
 const db = require("./models/db");
@@ -33,7 +32,7 @@ app.get("/getAdmins/:id", util.createGetRouteHandler("admin", "idAdmin"));
 app.get("/getUsuarios/:id", util.createGetRouteHandler("usuario", "idUser"));
 app.get("/getProducts/:id", util.createGetRouteHandler("product", "id"));
 app.get("/getCompanies/:id", util.createGetRouteHandler("company", "idCompany"));
-app.get("/getCarts/:id", util.createGetAllRouteHandler("cart", "idCart"));
+app.get("/getCarts/:id", util.createGetRouteHandler("cart", "idCart"));
 app.get("/getDetailsCart/:id", util.createGetRouteHandler("detailcart", "fkIdCart"));
 app.get("/getCartsByIdUser/:id", util.createGetRouteHandler("cart", "fkIdUser"));
 app.get("/getProductsByQuantity/:quant", util.createGetQuantityRouteHandler("product"));
@@ -54,12 +53,14 @@ app.put("/updateAdmins/:id", util.createPutRouteHandler("admin", "idAdmin"));
 app.put("/updateUsuarios/:id", util.createPutRouteHandler("usuario", "idUser"));
 app.put("/updateProducts/:id", util.createPutRouteHandler("product", "id"));
 app.put("/updateCarts/:id", util.createPutRouteHandler("cart", "idCart"));
+app.put("/updateDetailCart/:id", util.createPutRouteHandler("detailcart", "idDetail"));
 
 // Methods DELETE
 app.delete("/deleteAdmins/:id", util.createDeleteRouteHandler("admin", "idAdmin"));
 app.delete("/deleteUsuarios/:id", util.createDeleteRouteHandler("usuario", "idUser"));
 app.delete("/deleteProducts/:id", util.createDeleteRouteHandler("product", "id"));
 app.delete("/deleteCarts/:id", util.createDeleteRouteHandler("cart", "idCart"));
+app.delete("/deleteDetailCart/:id", util.createDeleteRouteHandler("detailcart", "idDetail"));
 
 // Start server
 app.listen(port, () => {
